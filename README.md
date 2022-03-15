@@ -55,6 +55,7 @@ cd client
 npm start
 cd ..
 cd server
+docker build -t playground .
 npm start
 ```
 
