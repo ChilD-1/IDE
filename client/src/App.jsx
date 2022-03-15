@@ -6,12 +6,37 @@ import socket from "./helper.jsx";
 import Folder from "./Components/Folder";
 import Browser from "./Components/Browser";
 import "./app.css";
+
 const App = () => {
   const [selectedLang, setSelectedLang] = useState("javascript");
   const [code, setCode] = useState("");
   const [files, setfiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState("/Dcode/index.js");
-  const [link, setlink] = useState("http://localhost:3001");
+  const [link, setlink] = useState();
+  const [demoPort, setDemoPort] = useState();
+
+  const [playground, setPlayground] = useState()
+
+  useEffect(() => {
+
+    socket.on("generate name", ({name, port}) => {
+      console.log("34 ", name, port)
+      setPlayground(name)
+      setSelectedFile(`Dcode/${name}/index.js`)
+      setlink(`http://localhost:${port}`)
+      setDemoPort(port)
+    })
+
+  }, [])
+
+  useEffect(() => {
+    console.log("43 ", playground)
+    console.log("44 ", demoPort)
+
+    if (playground != undefined && demoPort != undefined) {
+      socket.emit("start", {name: playground, port: demoPort})
+    }
+  }, [playground, demoPort])
 
   useEffect(() => {
     socket.emit("content", selectedFile); //send the file name to the server
